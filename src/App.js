@@ -23,6 +23,11 @@ function App() {
     setNoteTitle(e.target.value);
   }
 
+  const deleteNote = (noteId) => {
+    const updateNotes = notes.filter((item)=>item.id !== noteId);
+    setNotes(updateNotes);
+  }
+
   return (
     <div className="App">
       <form onSubmit={addNote}>
@@ -32,7 +37,13 @@ function App() {
       
       <ul>
         {notes.map((n)=>(
-          <li key={n.id}>{n.title}</li>
+          <li key={n.id}>
+            {/* <span>id:{n.id}</span> */}
+            <span>{n.title}</span>
+            <button>Edit</button>
+            <button onClick={()=>deleteNote(n.id)}>Delete</button>
+
+          </li>
         ))}
       </ul>
     </div>
