@@ -1,37 +1,20 @@
+import { useState } from 'react';
 import './App.css';
-import BioData from './components/BioData';
-
-const data = [
-  {
-    name : "Lemon",
-    age : 32,
-    deparment : "CSE"
-  },
-  {
-    name : "Sakil",
-    age : 21,
-    deparment : "EEE"
-  },
-  {
-    name : "Jobber",
-    age : 45,
-    deparment : "IBC"
-  },
-];
 
 function App() {
+  const [counter , setCounter] = useState(20);
+  const increassCounter = () => {
+    setCounter(counter + 1);
+  }
+  const decressCounter = () => {
+    setCounter(counter - 1);
+  }
+
   return (
     <div className="App">
-      {data.map((getN) => (
-        <> 
-          <BioData
-            name={getN.name}
-            age={getN.age}
-            deparment={getN.deparment}
-          /> 
-          <hr/>
-        </>
-      ))}
+     <h2>Counter : {counter}</h2>
+     <button onClick={increassCounter}>Incress</button>
+     <button onClick={decressCounter}>Decress</button>
       
     </div>
   );
