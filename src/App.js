@@ -1,23 +1,38 @@
-import logo from './logo.svg';
 import './App.css';
+import BioData from './components/BioData';
+
+const data = [
+  {
+    name : "Lemon",
+    age : 32,
+    deparment : "CSE"
+  },
+  {
+    name : "Sakil",
+    age : 21,
+    deparment : "EEE"
+  },
+  {
+    name : "Jobber",
+    age : 45,
+    deparment : "IBC"
+  },
+];
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reloa sdf d.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {data.map((getN) => (
+        <> 
+          <BioData
+            name={getN.name}
+            age={getN.age}
+            deparment={getN.deparment}
+          /> 
+          <hr/>
+        </>
+      ))}
+      
     </div>
   );
 }
