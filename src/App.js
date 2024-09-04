@@ -3,68 +3,71 @@ import './App.css';
 
 function App() {
   
-  const [noteTitle,setNoteTitle] = useState("");
-  const [editedNoteId,setEditedNoteId] = useState(null);
-  const [notes,setNotes] = useState([]);
+  const [luckyNumber,setLuckerNumber] = useState("");
+  const [msg,setMsg] = useState("");
+  const [userName,setUserName] = useState("");
+  const [attempt,setAttempt] = useState(3);
+  const [users,setUsers] = useState([]);
 
-  const addNote = (e) => {
-    e.preventDefault();
-    if(noteTitle.trim() === ""){
-      return alert("please enver valid note");
-    }
-    if(editedNoteId){
-      let updatedItem = notes.map(item => {
-        if(item.id === editedNoteId){
-          return {...item,title:noteTitle}
-        }
-        return item;
+  const inputLuckyNumber = (e) => {
+    setLuckerNumber(e.target.value);
+  }
+  const changeUserName = (e) => {
+    setUserName(e.target.value);
+  }
+
+  const clearLuck = () => {
+    setUserName("");
+    setLuckerNumber("");
+    setTimeout(()=>{
+      setAttempt(3);
+    },3000)
+  }
+  const tryLuck = () => {
+    let leftAttem = attempt-1;
+    setAttempt(leftAttem);
+    if(leftAttem > 0 ){
+      let currentAttampt = 3-leftAttem;
+      let lNumber = getRandomInt();
+      console.log(lNumber)
+      if(lNumber === parseInt(luckyNumber)){
+        setMsg("Congratulation you won with attampt no. " + currentAttampt);
+        setUsers([...users,{id:Date.now(),name:userName,won:true,attempt:currentAttampt}]);
+        clearLuck()
       }
-    );
-    setNotes(updatedItem)
-      console.log(updatedItem);
     }else{
-      const n = {
-        id : Date.now(),
-        title : noteTitle
-      }
-      setNotes([n,...notes]);
-      
+      setMsg("Sorry for your bad luck");
+      setUsers([...users,{id:Date.now(),name:userName,won:false,attempt:null}]);
+      clearLuck()
     }
-    setNoteTitle("");
   }
 
-  const chengeNoteTitle = (e) => {
-    setNoteTitle(e.target.value);
-  }
-
-  const deleteNote = (noteId) => {
-    const updateNotes = notes.filter((item)=>item.id !== noteId);
-    setNotes(updateNotes);
-  }
-
-  const editNote = (note) => {
-    setEditedNoteId(note.id);
-    setNoteTitle(note.title);
+  const getRandomInt = (max = 10) => {
+    return Math.floor(Math.random() * max);
   }
 
   return (
     <div className="App">
-      <form onSubmit={addNote}>
-        <input type="text" value={noteTitle} onChange={chengeNoteTitle} />
-        <button type="submit">{editedNoteId ? 'Update Note' : 'Save Note'}</button> 
-      </form>
-      
-      <ul>
-        {notes.map((n)=>(
-          <li key={n.id}>
-            {/* <span>id:{n.id}</span> */}
-            <span>{n.title}</span>
-            <button onClick={()=>editNote(n)}>Edit</button>
-            <button onClick={()=>deleteNote(n.id)}>Delete</button>
 
-          </li>
+      <div>
+      <p>{msg}</p>
+        {/* {msg && <p> sdfa {msg}</p>} */}
+
+        <input type="text" value={userName} onChange={changeUserName} />
+        <input type="number" value={luckyNumber} onChange={inputLuckyNumber} />
+
+        {attempt > 0 && 
+          <button onClick={tryLuck}>Try Your Luck {attempt}</button> 
+        }
+
+        {users?.map((u) => (
+          <p key={u.id}>{u.name} - {u.won ? u.attempt : "n/a"}</p>
         ))}
-      </ul>
+        
+        
+      </div>
+      
+     
     </div>
   );
 }
