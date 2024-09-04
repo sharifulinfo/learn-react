@@ -4,6 +4,7 @@ import './App.css';
 function App() {
   
   const [noteTitle,setNoteTitle] = useState("");
+  const [editedNoteId,setEditedNoteId] = useState(null);
   const [notes,setNotes] = useState([]);
 
   const addNote = (e) => {
@@ -11,12 +12,25 @@ function App() {
     if(noteTitle.trim() === ""){
       return alert("please enver valid note");
     }
-    const n = {
-      id : Date.now(),
-      title : noteTitle
+    if(editedNoteId){
+      let updatedItem = notes.map(item => {
+        if(item.id === editedNoteId){
+          return {...item,title:noteTitle}
+        }
+        return item;
+      }
+    );
+    setNotes(updatedItem)
+      console.log(updatedItem);
+    }else{
+      const n = {
+        id : Date.now(),
+        title : noteTitle
+      }
+      setNotes([n,...notes]);
+      
     }
-    setNotes([n,...notes]);
-    console.log(notes);
+    setNoteTitle("");
   }
 
   const chengeNoteTitle = (e) => {
@@ -28,11 +42,16 @@ function App() {
     setNotes(updateNotes);
   }
 
+  const editNote = (note) => {
+    setEditedNoteId(note.id);
+    setNoteTitle(note.title);
+  }
+
   return (
     <div className="App">
       <form onSubmit={addNote}>
         <input type="text" value={noteTitle} onChange={chengeNoteTitle} />
-        <button type="submit">Save Note</button> 
+        <button type="submit">{editedNoteId ? 'Update Note' : 'Save Note'}</button> 
       </form>
       
       <ul>
@@ -40,7 +59,7 @@ function App() {
           <li key={n.id}>
             {/* <span>id:{n.id}</span> */}
             <span>{n.title}</span>
-            <button>Edit</button>
+            <button onClick={()=>editNote(n)}>Edit</button>
             <button onClick={()=>deleteNote(n.id)}>Delete</button>
 
           </li>
