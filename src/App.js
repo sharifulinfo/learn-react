@@ -4,8 +4,6 @@ import Student from './components/students';
 
 function App() {
   const [students,setStudents] = useState([]);
-  const [presentStudents,setPresentStudents] = useState([]);
-  const [absentStudents,setAbsentStudents] = useState([]);
   const [studentName,setStudentName] = useState("");
   const [editableStudent,setEditableStudent] = useState({});
   
