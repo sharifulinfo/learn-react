@@ -1,75 +1,118 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
+import Student from './components/students';
 
 function App() {
+  const [students,setStudents] = useState([]);
+  const [presentStudents,setPresentStudents] = useState([]);
+  const [absentStudents,setAbsentStudents] = useState([]);
+  const [studentName,setStudentName] = useState("");
+  const [editableStudent,setEditableStudent] = useState({});
   
-  const [luckyNumber,setLuckerNumber] = useState("");
-  const [msg,setMsg] = useState("");
-  const [userName,setUserName] = useState("");
-  const [attempt,setAttempt] = useState(3);
-  const [users,setUsers] = useState([]);
+  useEffect(() => {
+    setStudentName(editableStudent.name)
+  }, [editableStudent])
+  
 
-  const inputLuckyNumber = (e) => {
-    setLuckerNumber(e.target.value);
-  }
-  const changeUserName = (e) => {
-    setUserName(e.target.value);
-  }
-
-  const clearLuck = () => {
-    setUserName("");
-    setLuckerNumber("");
-    setTimeout(()=>{
-      setAttempt(3);
-    },3000)
-  }
-  const tryLuck = () => {
-    let leftAttem = attempt-1;
-    setAttempt(leftAttem);
-    if(leftAttem > 0 ){
-      let currentAttampt = 3-leftAttem;
-      let lNumber = getRandomInt();
-      console.log(lNumber)
-      if(lNumber === parseInt(luckyNumber)){
-        setMsg("Congratulation you won with attampt no. " + currentAttampt);
-        setUsers([...users,{id:Date.now(),name:userName,won:true,attempt:currentAttampt}]);
-        clearLuck()
-      }
-    }else{
-      setMsg("Sorry for your bad luck");
-      setUsers([...users,{id:Date.now(),name:userName,won:false,attempt:null}]);
-      clearLuck()
+  const setStudentNameFun = (val) => {
+    if(val){
+      setStudentName(val);
     }
   }
 
-  const getRandomInt = (max = 10) => {
-    return Math.floor(Math.random() * max);
+  const addStudent = (e) => {
+    e.preventDefault();
+    if(studentName){
+      if(editableStudent.id){
+        const updateStudents = students.map((stu) => {
+          if(editableStudent.id === stu.id){
+            stu.name = studentName;
+            return stu;
+          }
+          return stu;
+        })
+        setEditableStudent({});
+        setStudents(updateStudents)
+      }else{
+        setStudents([{id:Date.now(),name:studentName,status: 'all'},...students]);
+      }
+      setStudentName("");
+    }
+  }
+
+  const addStatus = (student,status = 'present') => {
+    if(student){
+      const updateStudents = students.map((stu) => {
+        if(student.id === stu.id){
+          stu.status = status;
+          return stu;
+        }
+        return stu;
+      })
+      setStudents(updateStudents)
+    }
+  }
+
+  const deleteStudent = (student) => {
+    if(student){
+      const updateStudents = students.filter(stu => stu.id !== student.id);
+      setStudents(updateStudents)
+    }
   }
 
   return (
     <div className="App">
+      <form onSubmit={addStudent}>
+        <input type="text" value={studentName} onChange={(e)=>setStudentNameFun(e.target.value)} />
+        <button>Save</button> 
+      </form>
 
-      <div>
-      <p>{msg}</p>
-        {/* {msg && <p> sdfa {msg}</p>} */}
+      <table>
+        <thead>
+            <tr>
+                <th width="100">name</th>
+                <th>action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {students.map(stu => (
+                <tr key={stu.id}>
+                  <td>{stu.name}</td>
+                  <td>
+                      <div>
+                          <button onClick={() => setEditableStudent(stu)}>edit</button>
+                          <button onClick={() => deleteStudent(stu)}>delete</button>
+                          { stu.status === 'all' && 
+                            <>
+                              <button onClick={() => addStatus(stu)}>present</button>
+                              <button onClick={() => addStatus(stu,'absent')}>absent</button>
+                            </>
+                          }
+                      </div>
+                  </td>
+              </tr>
+            ))}
+        </tbody>
+    </table>
+    <hr/>
+    <h4>Present list</h4>
+    <Student 
+        students={students}
+        setEditableStudent={setEditableStudent}
+        addStatus={addStatus}
+        status = "present"
+      ></Student>
 
-        <input type="text" value={userName} onChange={changeUserName} />
-        <input type="number" value={luckyNumber} onChange={inputLuckyNumber} />
+    <hr/>
+    <h4>Abssent list</h4>
+    <Student 
+        students={students}
+        setEditableStudent={setEditableStudent}
+        addStatus={addStatus}
+        status = "absent"
+      ></Student>
 
-        {attempt > 0 && 
-          <button onClick={tryLuck}>Try Your Luck {attempt}</button> 
-        }
-
-        {users?.map((u) => (
-          <p key={u.id}>{u.name} - {u.won ? u.attempt : "n/a"}</p>
-        ))}
-        
-        
-      </div>
-      
-     
     </div>
   );
 }
-
 export default App;
